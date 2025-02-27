@@ -1,5 +1,6 @@
 package tdd.elise.tp.manager;
 
+import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
 import tdd.elise.tp.service.ReservationDataService;
 
@@ -20,4 +21,7 @@ public class ReservationManager {
         return databaseService.findByStatus(status);
     }
 
+    public List<Reservation> getReservationHistoryForMember(Member member) {
+        return null;
+    }
 }

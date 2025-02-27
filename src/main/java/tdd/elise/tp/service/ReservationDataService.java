@@ -1,6 +1,7 @@
 package tdd.elise.tp.service;
 
 import tdd.elise.tp.models.Book;
+import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
 
 import java.util.List;
@@ -12,5 +13,9 @@ public class ReservationDataService {
 
     public List<Reservation> findByStatus(String status) {
         return null;
+    }
+
+    public List<Reservation> findByMember(Member member) {
+        return null; // Simule une méthode qui retourne des réservations
     }
 }
