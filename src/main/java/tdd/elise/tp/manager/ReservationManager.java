@@ -22,6 +22,15 @@ public class ReservationManager {
     }
 
     public List<Reservation> getReservationHistoryForMember(Member member) {
+        return databaseService.findByMember(member);
+    }
+
+    public List<Reservation> getOverdueReservations() {
         return null;
+    }
+
+    public List<Reservation> getExpiredReservations(String expired) {
+        return null;
+        // envoyer mail si expirés
     }
 }

@@ -81,4 +81,30 @@ class ReservationManagerTest {
         // Vérifie que le service a bien été appelé
         verify(fakeDatabaseService, times(1)).findByMember(member);
     }
+
+    @Test
+    void shouldReturnOnlyOverdueReservations() {
+        // GIVEN : Une réservation expirée et une encore valide
+        Member member = new Member("Doe", "John", new Date(), Civility.MR);
+        Reservation overdueReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.EXPIRED);
+        Reservation futureReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+
+        // Mock du service de base de données
+        when(fakeDatabaseService.findByStatus("EXPIRED")).thenReturn(List.of(overdueReservation)); // Seulement les réservations expirés
+
+        // WHEN : Appel de la méthode testée
+        List<Reservation> overdueReservations = reservationManager.getExpiredReservations("EXPIRED");
+
+        // Vérification des résultats
+        assertEquals(1, overdueReservations.size()); // On attend 1 réservation expiré
+        assertEquals(overdueReservation, overdueReservations.get(0));
+
+        // Vérifie que le service a bien été appelé
+        verify(fakeDatabaseService, times(1)).findByStatus("EXPIRED");
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoExpiredReservations() {
+
+    }
 }
