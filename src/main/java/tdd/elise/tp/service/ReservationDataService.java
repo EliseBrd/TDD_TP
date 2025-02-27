@@ -10,5 +10,7 @@ public class ReservationDataService {
         return null;
     }
 
-
+    public List<Reservation> findByStatus(String status) {
+        return null;
+    }
 }

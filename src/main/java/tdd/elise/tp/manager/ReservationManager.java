@@ -16,8 +16,8 @@ public class ReservationManager {
     }
 
     // Récupérer les réservations ouvertes
-    public List<Reservation> getOpenReservations() {
-        return null;
+    public List<Reservation> getOpenReservations(String status) {
+        return databaseService.findByStatus(status);
     }
 
 }

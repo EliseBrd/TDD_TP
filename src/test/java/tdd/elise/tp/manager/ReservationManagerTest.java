@@ -39,22 +39,23 @@ class ReservationManagerTest {
         Member member = new Member("Doe", "John", new Date(), null);
         Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN); // Future
         Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 2000000), ReservationStatus.OPEN); // Future
-        Reservation closedRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.OPEN); // Passée
+        Reservation closedRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.CLOSED); // Passée
 
         List<Reservation> allReservations = Arrays.asList(openRes1, openRes2, closedRes);
 
         // Mock du service de base de données
-        when(fakeDatabaseService.getAllReservations()).thenReturn(allReservations);
+        when(fakeDatabaseService.findByStatus("OPEN")).thenReturn(Arrays.asList(openRes1, openRes2)); // Seulement les réservations ouvertes
 
         // WHEN : Appel de la méthode testée
-        List<Reservation> openReservations = reservationManager.getOpenReservations();
+        List<Reservation> openReservations = reservationManager.getOpenReservations("OPEN");
 
-        // THEN : Vérification des résultats
+        // Vérification des résultats
         assertEquals(2, openReservations.size()); // On attend 2 réservations ouvertes
         assertEquals(openRes1, openReservations.get(0));
         assertEquals(openRes2, openReservations.get(1));
 
         // Vérifie que le service a bien été appelé
-        verify(fakeDatabaseService, times(1)).getAllReservations();
+        verify(fakeDatabaseService, times(1)).findByStatus("OPEN");
+
     }
 }
