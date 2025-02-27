@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum Format {
     PAPERBACK("Livre de poche"),
     HARDCOVER("Livre Grand format"),
@@ -13,4 +12,8 @@ public enum Format {
     BD("Bande dessiné");
 
     private final String name;
+
+    Format(String name) { // ✅ Constructeur explicite
+        this.name = name;
+    }
 }

@@ -1,6 +1,9 @@
 package tdd.elise.tp.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +18,10 @@ import tdd.elise.tp.models.enums.Format;
 public class Book extends PersistentEntity {
     private String isbn;
     private String title;
-    private Author author;
-    private Editor editor;
+    private String author;
+    private String editor;
+
+    @Enumerated(EnumType.STRING)
     private Format format;
     private Boolean available;
 }
