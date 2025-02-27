@@ -4,13 +4,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
+import tdd.elise.tp.exceptions.InvalidBookException;
+import tdd.elise.tp.exceptions.InvalidIsbnCharacterException;
 import tdd.elise.tp.manager.BookManager;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.enums.Format;
 import tdd.elise.tp.service.BookDataService;
+import tdd.elise.tp.service.IsbnValidator;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -93,7 +98,7 @@ class BookManagerTest {
         when(fakeWebService.getBookByISBN(ISBN)).thenReturn(null);
 
         // When & Then : une exception doit être levée car aucune information n'est trouvée
-        assertThrows(RuntimeException.class, () -> bookManager.getBookData(ISBN));
+        assertThrows(InvalidBookException.class, () -> bookManager.getBookData(ISBN));
     }
 
     // Cas 5 : Si des informations manquent en base, elles doivent être complétées par le web service.
@@ -110,8 +115,19 @@ class BookManagerTest {
         Book book = bookManager.getBookData(ISBN);
 
         // Then : les informations manquantes doivent être complétées et mises à jour en base
-        assertEquals(completeBook, book); // Le livre retourné doit être le livre complet
-        verify(fakeDatabaseService).put(completeBook); // On met à jour la base avec les infos complètes
+        assertThat(book)
+                .usingRecursiveComparison()
+                .isEqualTo(completeBook);
+
+        verify(fakeDatabaseService).put(argThat(updatedBook ->
+                updatedBook.getIsbn().equals(completeBook.getIsbn()) &&
+                        updatedBook.getTitle().equals(completeBook.getTitle()) &&
+                        updatedBook.getAuthor().equals(completeBook.getAuthor()) &&
+                        updatedBook.getEditor().equals(completeBook.getEditor()) &&
+                        updatedBook.getFormat() == completeBook.getFormat() &&
+                        updatedBook.getAvailable().equals(completeBook.getAvailable())
+        ));
+
     }
 
     // Cas 6 : Rechercher un livre par ISBN (si présent en base)
