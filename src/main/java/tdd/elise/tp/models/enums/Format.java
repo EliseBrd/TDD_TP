@@ -13,7 +13,7 @@ public enum Format {
 
     private final String name;
 
-    Format(String name) { // ✅ Constructeur explicite
+    Format(String name) { // Constructeur explicite
         this.name = name;
     }
 }

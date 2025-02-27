@@ -15,7 +15,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member extends PersistentEntity {
-    private int codeMember;
     private String lastName;
     private String firstName;
     private Date birthDate;
