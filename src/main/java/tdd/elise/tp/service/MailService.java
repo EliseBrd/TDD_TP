@@ -10,10 +10,13 @@ import tdd.elise.tp.models.Reservation;
 @Service
 public class MailService {
 
-    @Autowired
     private JavaMailSender mailSender;
 
     public void sendReminderEmail(Reservation reservation) {
-
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(reservation.getMember().getEmail());
+        message.setSubject("Rappel de votre réservation expirée");
+        message.setText("Votre réservation est expirée. Merci de la régulariser au plus vite.");
+        mailSender.send(message);  // Envoi de l'email
     }
 }

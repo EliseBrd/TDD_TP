@@ -34,6 +34,12 @@ public class ReservationManager {
     }
 
     public void sendReminderEmailsForExpiredReservations() {
+        // Récupérer les réservations expirées
+        List<Reservation> expiredReservations = databaseService.findByStatus("EXPIRED");
 
+        // Envoyer un mail pour chaque réservation expirée
+        for (Reservation reservation : expiredReservations) {
+            mailService.sendReminderEmail(reservation);
+        }
     }
 }
