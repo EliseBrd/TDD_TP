@@ -33,7 +33,7 @@ class MemberManagerTest {
     public void whenBirthdateIsInTheFuture_shouldThrowInvalidBirthdateException() {
         // GIVEN un membre avec une date de naissance dans le futur
         Date futureDate = new Date(System.currentTimeMillis() + 1000000000); // Date dans le futur
-        Member memberWithFutureBirthdate = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+        Member memberWithFutureBirthdate = new Member("Doe", "John", futureDate, null, "john.doe@email.com");
 
         // WHEN tentative de validation de la date de naissance
         // THEN vérifier que l'exception est lancée
@@ -46,7 +46,7 @@ class MemberManagerTest {
     public void whenBirthdateIsValid_shouldNotThrowException() {
         // GIVEN un membre avec une date de naissance valide (dans le passé)
         Date validDate = new Date(System.currentTimeMillis() - 1000000000); // Date valide dans le passé
-        Member memberWithValidBirthdate = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+        Member memberWithValidBirthdate = new Member("Doe", "John", validDate, null, "john.doe@email.com");
 
         // WHEN tentative de validation de la date de naissance
         // THEN vérifier qu'aucune exception n'est lancée
