@@ -1,5 +1,7 @@
 package tdd.elise.tp.manager;
 
+import tdd.elise.tp.exceptions.BookNotFoundException;
+import tdd.elise.tp.exceptions.MemberNotFoundException;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
@@ -74,6 +76,26 @@ public class ReservationManager {
     }
 
     public Reservation requestReservation(String memberId, String ISBN) {
-        return null;
+        // Récupérer le livre via son ISBN
+        Book book = bookDataService.getBookByISBN(ISBN);
+        if (book == null) {
+            throw new BookNotFoundException();
+        }
+
+        // Récupérer l'adhérent via son ID
+        Member member = memberDataService.findById(memberId);
+        if (member == null) {
+            throw new MemberNotFoundException();
+        }
+
+        // Créer la réservation
+        Reservation reservation = new Reservation();
+        reservation.setBook(book);
+        reservation.setMember(member); // Utilisation du membre récupéré
+        reservation.setStartDate(new Date());
+        reservation.setEndDate(new Date(System.currentTimeMillis() + 604800000)); // 7 jours après
+        reservation.setStatus(ReservationStatus.PENDING);
+
+        return databaseService.save(reservation);
     }
 }

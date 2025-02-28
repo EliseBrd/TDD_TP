@@ -1,6 +1,6 @@
 package tdd.elise.tp.manager;
 
-import tdd.elise.tp.exceptions.InvalidBookException;
+import tdd.elise.tp.exceptions.BookNotFoundException;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.service.BookDataService;
 
@@ -23,7 +23,7 @@ public class BookManager {
             Book completeBook = webService.getBookByISBN(isbn);
 
             if (completeBook == null) {
-                throw new InvalidBookException();
+                throw new BookNotFoundException();
             }
             if (book == null) {
                 databaseService.put(completeBook); // Ajoute le livre complet en base

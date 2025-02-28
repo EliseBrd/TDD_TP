@@ -86,8 +86,23 @@ class ReservationManagerTest {
         verify(fakeDatabaseService, times(1)).save(any(Reservation.class));
     }
 
+    // Une réservation a une date limite, d’un maximum de 4 mois au jour du dépôt de la réservation.
+    @Test
+    void shouldNotAllowReservationExceeding4MonthsLimit() {
 
+    }
 
+    // On peut mettre fin à la réservation
+    @Test
+    void shouldAllowEndingReservation() {
+
+    }
+
+    // Un adhérent ne peut avoir plus de 3 réservations ouvertes simultanées.
+    @Test
+    void shouldNotAllowMoreThanThreeOpenReservationsForMember() {
+
+    }
 
 
     /* -------------------------------------------------------

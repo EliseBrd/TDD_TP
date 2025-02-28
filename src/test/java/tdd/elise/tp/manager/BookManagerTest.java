@@ -4,14 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
-import tdd.elise.tp.exceptions.InvalidBookException;
-import tdd.elise.tp.exceptions.InvalidIsbnCharacterException;
-import tdd.elise.tp.manager.BookManager;
+import tdd.elise.tp.exceptions.BookNotFoundException;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.enums.Format;
 import tdd.elise.tp.service.BookDataService;
-import tdd.elise.tp.service.IsbnValidator;
 
 import java.util.List;
 
@@ -94,7 +90,7 @@ class BookManagerTest {
         when(fakeWebService.getBookByISBN(ISBN)).thenReturn(null);
 
         // When & Then : une exception doit être levée car aucune information n'est trouvée
-        assertThrows(InvalidBookException.class, () -> bookManager.getBookData(ISBN));
+        assertThrows(BookNotFoundException.class, () -> bookManager.getBookData(ISBN));
     }
 
     // Cas 5 : Si des informations manquent en base, elles doivent être complétées par le web service.
