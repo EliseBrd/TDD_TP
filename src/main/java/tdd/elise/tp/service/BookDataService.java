@@ -29,7 +29,11 @@ public class BookDataService {
     }
 
     public Book updateBook(Book book, String title, String newTitle) {
-
+        if (book != null && book.getTitle().equals(title)) {
+            // Logique de mise à jour ici, par exemple changer le titre
+            book.setTitle(newTitle);
+            return book; // Retourner le livre mis à jour
+        }
         return null;
     }
 }

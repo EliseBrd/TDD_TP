@@ -54,6 +54,6 @@ public class BookManager {
     }
 
     public Book updateBook(Book book, String title, String newTitle) {
-        return null;
+        return databaseService.updateBook(book, title, newTitle);
     }
 }
