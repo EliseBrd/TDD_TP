@@ -102,7 +102,13 @@ public class ReservationManager {
     }
 
     public Reservation addReservation(Reservation reservation) {
-        return null;
+        List<Reservation> openReservations = databaseService.getReservationsForMember(reservation.getMember(), ReservationStatus.OPEN);
+        if (openReservations.size() >= 3) {
+            throw new Limite3ReservationOfMEmbersException("Un adhérent ne peut avoir plus de 3 réservations ouvertes simultanées.");
+        }
+
+        // Ajouter la réservation si l'exception n'a pas été levée
+        return databaseService.save(reservation);
     }
 
     // Méthode générale pour obtenir les réservations d'un membre en fonction du statut

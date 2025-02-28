@@ -17,6 +17,7 @@ import tdd.elise.tp.service.MailService;
 import tdd.elise.tp.service.MemberDataService;
 import tdd.elise.tp.service.ReservationDataService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -113,20 +114,34 @@ class ReservationManagerTest {
     // Un adhérent ne peut avoir plus de 3 réservations ouvertes simultanées.
     @Test
     public void whenMemberHasMoreThanThreeOpenReservations_shouldThrowLimite3ReservationOfMEmbersException() {
-        // GIVEN Création d'un membre et de 3 réservations ouvertes
+        // GIVEN Création d'un membre
         Member member = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
-        Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
-        Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
-        Reservation openRes3 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
 
-        // Simulation du comportement de getReservationsForMember pour retourner 3 réservations ouvertes
+        // Simulation de la base de données vide au début
         when(fakeDatabaseService.getReservationsForMember(member, ReservationStatus.OPEN))
-                .thenReturn(List.of(openRes1, openRes2, openRes3));
+                .thenReturn(new ArrayList<>()); // Pas de réservations au début
 
         // Ajouter les 3 premières réservations ouvertes sans exception
+        Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
         reservationManager.addReservation(openRes1);
+
+        // Simuler qu'il y a maintenant 1 réservation ouverte
+        when(fakeDatabaseService.getReservationsForMember(member, ReservationStatus.OPEN))
+                .thenReturn(List.of(openRes1));
+
+        Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
         reservationManager.addReservation(openRes2);
+
+        // Simuler qu'il y a maintenant 2 réservations ouvertes
+        when(fakeDatabaseService.getReservationsForMember(member, ReservationStatus.OPEN))
+                .thenReturn(List.of(openRes1, openRes2));
+
+        Reservation openRes3 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
         reservationManager.addReservation(openRes3);
+
+        // Simuler qu'il y a maintenant 3 réservations ouvertes
+        when(fakeDatabaseService.getReservationsForMember(member, ReservationStatus.OPEN))
+                .thenReturn(List.of(openRes1, openRes2, openRes3));
 
         // WHEN Tentative d'ajouter la quatrième réservation ouverte
         Reservation openRes4 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
@@ -136,7 +151,6 @@ class ReservationManagerTest {
             reservationManager.addReservation(openRes4);  // Ça devrait lever l'exception à la 4ème réservation
         });
     }
-
 
 
     /* -------------------------------------------------------

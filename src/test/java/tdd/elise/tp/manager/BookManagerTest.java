@@ -169,4 +169,35 @@ class BookManagerTest {
         // Then : on doit retrouver tous les livres de cet auteur
         assertEquals(expectedBooks, books);
     }
+
+    /* -------------------------------------------------------
+     *                      UPDATE
+     * -------------------------------------------------------*/
+    @Test
+    public void BookModificationIsValid_ShouldReturnModifiedBook() {
+        // GIVEN Création d'un livre
+        Book book = new Book("123", "Les Misérables", "Victor Hugo", "Gallimard", Format.EBOOK, true);
+        Book expectedBook = new Book("789", "Notre-Dame de Paris", "Victor Hugo", "Folio", Format.PAPERBACK, true);
+        String newTitle = "la ferme aux animaux";
+
+        // Simuler le comportement du service pour mettre à jour le livre
+        when(fakeDatabaseService.updateBook(book, "title", newTitle)).thenReturn(expectedBook);
+
+        // Appeler la méthode updateBook
+        Book updatedBook = bookManager.updateBook(book, "title", newTitle);
+
+        // THEN Vérifier que le livre mis à jour est correct
+        assertEquals(expectedBook.toString(), updatedBook.toString());
+    }
+
+
+    @Test
+    public void BookModificationFormatIsInvalid_ShouldReturnException() {
+
+    }
+
+    @Test
+    public void BookModificationFieldIsInvalid_ShouldReturnException() {
+
+    }
 }

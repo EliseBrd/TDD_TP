@@ -52,4 +52,8 @@ public class BookManager {
     public List<Book> getBooksByAuthor(String author) {
         return databaseService.findByAuthor(author);
     }
+
+    public Book updateBook(Book book, String title, String newTitle) {
+        return null;
+    }
 }

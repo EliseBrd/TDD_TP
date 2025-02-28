@@ -27,4 +27,9 @@ public class BookDataService {
     public Book putAuthor(String author) {
         return null;
     }
+
+    public Book updateBook(Book book, String title, String newTitle) {
+
+        return null;
+    }
 }
