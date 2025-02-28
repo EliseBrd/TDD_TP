@@ -1,6 +1,7 @@
 package tdd.elise.tp.manager;
 
 import tdd.elise.tp.exceptions.BookNotFoundException;
+import tdd.elise.tp.exceptions.Limite3ReservationOfMEmbersException;
 import tdd.elise.tp.exceptions.MemberNotFoundException;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.Member;
@@ -12,6 +13,7 @@ import tdd.elise.tp.service.MemberDataService;
 import tdd.elise.tp.models.enums.ReservationStatus;
 
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -98,4 +100,14 @@ public class ReservationManager {
 
         return databaseService.save(reservation);
     }
+
+    public Reservation addReservation(Reservation reservation) {
+        return null;
+    }
+
+    // Méthode générale pour obtenir les réservations d'un membre en fonction du statut
+    public List<Reservation> getReservationsForMember(Member member, ReservationStatus status) {
+        return databaseService.findByMemberAndStatus(member, status);
+    }
+
 }

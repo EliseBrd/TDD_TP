@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import tdd.elise.tp.exceptions.Limite3ReservationOfMEmbersException;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
@@ -95,14 +96,47 @@ class ReservationManagerTest {
     // On peut mettre fin à la réservation
     @Test
     void shouldAllowEndingReservation() {
+        // GIVEN Créer une réservation ouverte
+        Member member = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+        Reservation openRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
 
+        // Mock du service de base de données
+        when(fakeDatabaseService.findByStatus("OPEN")).thenReturn(List.of(openRes));
+
+        // When Mettre fin à la réservation
+        openRes.endReservation();
+
+        // Should Vérifier que le statut est bien "closed"
+        assertEquals(ReservationStatus.CLOSED, openRes.getStatus());
     }
 
     // Un adhérent ne peut avoir plus de 3 réservations ouvertes simultanées.
     @Test
-    void shouldNotAllowMoreThanThreeOpenReservationsForMember() {
+    public void whenMemberHasMoreThanThreeOpenReservations_shouldThrowLimite3ReservationOfMEmbersException() {
+        // GIVEN Création d'un membre et de 3 réservations ouvertes
+        Member member = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+        Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+        Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+        Reservation openRes3 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
 
+        // Simulation du comportement de getReservationsForMember pour retourner 3 réservations ouvertes
+        when(fakeDatabaseService.getReservationsForMember(member, ReservationStatus.OPEN))
+                .thenReturn(List.of(openRes1, openRes2, openRes3));
+
+        // Ajouter les 3 premières réservations ouvertes sans exception
+        reservationManager.addReservation(openRes1);
+        reservationManager.addReservation(openRes2);
+        reservationManager.addReservation(openRes3);
+
+        // WHEN Tentative d'ajouter la quatrième réservation ouverte
+        Reservation openRes4 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+
+        // THEN Vérifier que l'exception est bien levée pour la 4ème réservation
+        assertThrows(Limite3ReservationOfMEmbersException.class, () -> {
+            reservationManager.addReservation(openRes4);  // Ça devrait lever l'exception à la 4ème réservation
+        });
     }
+
 
 
     /* -------------------------------------------------------
@@ -113,9 +147,9 @@ class ReservationManagerTest {
     void shouldReturnOnlyOpenReservations() {
         // GIVEN : Adhérent et réservations mockées
         Member member = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
-        Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN); // Future
-        Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 2000000), ReservationStatus.OPEN); // Future
-        Reservation closedRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.CLOSED); // Passée
+        Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+        Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 2000000), ReservationStatus.OPEN);
+        Reservation closedRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.CLOSED);
 
         // Mock du service de base de données
         when(fakeDatabaseService.findByStatus("OPEN")).thenReturn(Arrays.asList(openRes1, openRes2)); // Seulement les réservations ouvertes

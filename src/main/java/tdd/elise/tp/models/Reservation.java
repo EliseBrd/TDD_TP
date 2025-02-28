@@ -27,4 +27,8 @@ public class Reservation extends PersistentEntity {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    // Méthode pour fermer la réservation
+    public void endReservation() {
+        this.status = ReservationStatus.CLOSED;
+    }
 }

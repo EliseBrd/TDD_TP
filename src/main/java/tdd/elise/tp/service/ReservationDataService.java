@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
+import tdd.elise.tp.models.enums.ReservationStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,14 @@ public class ReservationDataService {
     }
 
     public Reservation save(Reservation reservation) {
+        return null;
+    }
+
+    public List<Reservation> findByMemberAndStatus(Member member, ReservationStatus status) {
+        return null;
+    }
+
+    public List<Reservation> getReservationsForMember(Member member, ReservationStatus reservationStatus) {
         return null;
     }
 }
