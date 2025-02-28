@@ -89,10 +89,10 @@ class ReservationManagerTest {
     }
 
     // Une réservation a une date limite, d’un maximum de 4 mois au jour du dépôt de la réservation.
-    @Test
+    /*@Test
     void shouldNotAllowReservationExceeding4MonthsLimit() {
 
-    }
+    }*/
 
     // On peut mettre fin à la réservation
     @Test

@@ -191,7 +191,7 @@ class BookManagerTest {
     }
 
 
-    @Test
+    /*@Test
     public void BookModificationFormatIsInvalid_ShouldReturnException() {
 
     }
@@ -199,5 +199,5 @@ class BookManagerTest {
     @Test
     public void BookModificationFieldIsInvalid_ShouldReturnException() {
 
-    }
+    }*/
 }
