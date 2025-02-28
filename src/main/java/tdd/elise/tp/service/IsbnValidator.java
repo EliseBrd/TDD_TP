@@ -1,8 +1,10 @@
 package tdd.elise.tp.service;
 
+import org.springframework.stereotype.Service;
 import tdd.elise.tp.exceptions.InvalidIsbnCharacterException;
 import tdd.elise.tp.exceptions.InvalidIsbnLengthException;
 
+@Service
 public class IsbnValidator {
 
     boolean validateIsbn(String isbn) {

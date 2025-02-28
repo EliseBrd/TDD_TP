@@ -2,6 +2,7 @@ package tdd.elise.tp.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tdd.elise.tp.models.Book;
@@ -10,6 +11,7 @@ import tdd.elise.tp.models.Reservation;
 import tdd.elise.tp.models.enums.Civility;
 import tdd.elise.tp.models.enums.Format;
 import tdd.elise.tp.models.enums.ReservationStatus;
+import tdd.elise.tp.service.MailService;
 import tdd.elise.tp.service.ReservationDataService;
 
 import java.util.Arrays;
@@ -26,18 +28,22 @@ class ReservationManagerTest {
     @Mock
     private ReservationDataService fakeWebService;
 
+    @Mock
+    private MailService mockMailService;
+
+    @InjectMocks
     private ReservationManager reservationManager;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        reservationManager = new ReservationManager(fakeDatabaseService, fakeWebService);
+        reservationManager = new ReservationManager(fakeDatabaseService, fakeWebService, mockMailService);
     }
 
     @Test
     void shouldReturnOnlyOpenReservations() {
         // GIVEN : Adhérent et réservations mockées
-        Member member = new Member("Doe", "John", new Date(), null);
+        Member member = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
         Reservation openRes1 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN); // Future
         Reservation openRes2 = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 2000000), ReservationStatus.OPEN); // Future
         Reservation closedRes = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.CLOSED); // Passée
@@ -60,7 +66,7 @@ class ReservationManagerTest {
     @Test
     void shouldReturnReservationsHistoryForMember() {
         // GIVEN : Un adhérent et plusieurs réservations (passées et ouvertes)
-        Member member = new Member("Doe", "John", new Date(), Civility.MR);
+        Member member = new Member("Doe", "John", new Date(), Civility.MR, "john.doe@email.com");
 
         Reservation pastReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 5000000), ReservationStatus.CLOSED); // Passée
         Reservation openReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 5000000), ReservationStatus.OPEN); // Future
@@ -83,24 +89,24 @@ class ReservationManagerTest {
     }
 
     @Test
-    void shouldReturnOnlyOverdueReservations() {
-        // GIVEN : Une réservation expirée et une encore valide
-        Member member = new Member("Doe", "John", new Date(), Civility.MR);
-        Reservation overdueReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.EXPIRED);
-        Reservation futureReservation = new Reservation(null, member, new Date(), new Date(System.currentTimeMillis() + 1000000), ReservationStatus.OPEN);
+    void shouldSendReminderEmailsForExpiredReservations() {
+        // GIVEN : Deux réservations expirées
+        Member member1 = new Member("Doe", "John", new Date(), Civility.MR, "john.doe@email.com");
+        Member member2 = new Member("Smith", "Alice", new Date(), Civility.MRS, "alice.smith@email.com");
 
-        // Mock du service de base de données
-        when(fakeDatabaseService.findByStatus("EXPIRED")).thenReturn(List.of(overdueReservation)); // Seulement les réservations expirés
+        Reservation expiredRes1 = new Reservation(null, member1, new Date(), new Date(System.currentTimeMillis() - 1000000), ReservationStatus.EXPIRED);
+        Reservation expiredRes2 = new Reservation(null, member2, new Date(), new Date(System.currentTimeMillis() - 2000000), ReservationStatus.EXPIRED);
 
-        // WHEN : Appel de la méthode testée
-        List<Reservation> overdueReservations = reservationManager.getExpiredReservations("EXPIRED");
+        List<Reservation> expiredReservations = List.of(expiredRes1, expiredRes2);
 
-        // Vérification des résultats
-        assertEquals(1, overdueReservations.size()); // On attend 1 réservation expiré
-        assertEquals(overdueReservation, overdueReservations.get(0));
+        when(fakeDatabaseService.findByStatus("EXPIRED")).thenReturn(expiredReservations);
 
-        // Vérifie que le service a bien été appelé
-        verify(fakeDatabaseService, times(1)).findByStatus("EXPIRED");
+        // WHEN : On appelle la méthode qui envoie les emails
+        reservationManager.sendReminderEmailsForExpiredReservations();
+
+        // THEN : On vérifie que `sendReminderEmail` est appelé pour chaque réservation expirée
+        verify(mockMailService, times(1)).sendReminderEmail(expiredRes1);
+        verify(mockMailService, times(1)).sendReminderEmail(expiredRes2);
     }
 
     @Test

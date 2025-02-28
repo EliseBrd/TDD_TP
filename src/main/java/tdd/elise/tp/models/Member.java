@@ -19,4 +19,5 @@ public class Member extends PersistentEntity {
     private String firstName;
     private Date birthDate;
     private Civility civility;
+    private String email;
 }

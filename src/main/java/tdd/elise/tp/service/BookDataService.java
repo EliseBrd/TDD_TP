@@ -1,9 +1,11 @@
 package tdd.elise.tp.service;
 
 import tdd.elise.tp.models.Book;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class BookDataService {
 
     public Book getBookByISBN(String isbn) {
