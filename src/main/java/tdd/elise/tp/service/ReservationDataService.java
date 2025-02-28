@@ -5,6 +5,7 @@ import tdd.elise.tp.models.Book;
 import tdd.elise.tp.models.Member;
 import tdd.elise.tp.models.Reservation;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,5 +20,9 @@ public class ReservationDataService {
 
     public List<Reservation> findByMember(Member member) {
         return null; // Simule une méthode qui retourne des réservations
+    }
+
+    public Reservation save(Reservation reservation) {
+        return null;
     }
 }

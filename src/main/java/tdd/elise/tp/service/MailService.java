@@ -29,8 +29,9 @@ public class MailService {
         mailSender.send(message);  // Envoi de l'email
     }
 
-    public MailService requestReminderEmail(Member member, List<Reservation> expiredReservations) {
-        return null;
+    public void requestReminderEmail(Member member, List<Reservation> expiredReservations) {
+        // Implémentation de l'envoi d'un email de rappel
+        System.out.println("Envoi d'un email de rappel à " + member.getEmail() + " pour " + expiredReservations.size() + " réservations expirées.");
     }
 
 }

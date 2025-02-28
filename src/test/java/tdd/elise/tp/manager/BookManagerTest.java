@@ -34,10 +34,6 @@ class BookManagerTest {
     private final String EDITOR = "Guillaume";
 
     @BeforeEach
-    /*public void init() {
-        fakeDatabaseService = mock(BookDataService.class);
-        fakeWebService = mock(BookDataService.class);
-    }*/
     void setUp() {
         MockitoAnnotations.openMocks(this);
         bookManager = new BookManager(fakeDatabaseService, fakeWebService);

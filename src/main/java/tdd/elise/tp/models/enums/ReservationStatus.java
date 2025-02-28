@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 public enum ReservationStatus {
     OPEN("Réservation ouvert"),
     CLOSED("Réservation fermée"),
+    PENDING("Réservation en attente de confirmation"),
     EXPIRED("Réservation expirée");
 
     private final String name;

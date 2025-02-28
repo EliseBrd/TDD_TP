@@ -11,7 +11,9 @@ import tdd.elise.tp.models.Reservation;
 import tdd.elise.tp.models.enums.Civility;
 import tdd.elise.tp.models.enums.Format;
 import tdd.elise.tp.models.enums.ReservationStatus;
+import tdd.elise.tp.service.BookDataService;
 import tdd.elise.tp.service.MailService;
+import tdd.elise.tp.service.MemberDataService;
 import tdd.elise.tp.service.ReservationDataService;
 
 import java.util.Arrays;
@@ -32,14 +34,65 @@ class ReservationManagerTest {
     @Mock
     private MailService mockMailService;
 
+    @Mock
+    private BookDataService bookDataService;
+
+    @Mock
+    private MemberDataService memberDataService;
+
     @InjectMocks
     private ReservationManager reservationManager;
+
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        reservationManager = new ReservationManager(fakeDatabaseService, fakeWebService, mockMailService);
+        reservationManager = new ReservationManager(fakeDatabaseService, fakeWebService, mockMailService, memberDataService, bookDataService);
+
     }
+    /* -------------------------------------------------------
+     *                      RESERVATIONS
+     * -------------------------------------------------------*/
+    @Test
+    void shouldRequestReservationForMember() {
+        // GIVEN : Un adhérent et un livre existant
+        String memberId = "123";
+        String ISBN = "2253009687";
+        String TITLE = "Notre Dame de Paris";
+        String AUTHOR = "Victor Hugo";
+        String EDITOR = "Guillaume";
+
+        // Mock d'un livre
+        Book mockBook = new Book(ISBN, TITLE, AUTHOR, EDITOR, Format.PAPERBACK, true);
+
+        // Mock d'un membre
+        Member mockMember = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+
+
+        // Simuler les retours des services mockés
+        when(bookDataService.getBookByISBN(ISBN)).thenReturn(mockBook);
+        when(memberDataService.findById(memberId)).thenReturn(mockMember);
+        when(fakeDatabaseService.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // WHEN : On demande une réservation
+        Reservation reservation = reservationManager.requestReservation(memberId, ISBN);
+
+        // THEN : Vérification des données de la réservation
+        assertEquals(mockBook, reservation.getBook());
+        assertEquals(mockMember, reservation.getMember());
+        assertEquals(ReservationStatus.PENDING, reservation.getStatus());
+
+        // Vérifie que `save` a bien été appelé
+        verify(fakeDatabaseService, times(1)).save(any(Reservation.class));
+    }
+
+
+
+
+
+    /* -------------------------------------------------------
+     *                      GESTION
+     * -------------------------------------------------------*/
 
     @Test
     void shouldReturnOnlyOpenReservations() {
