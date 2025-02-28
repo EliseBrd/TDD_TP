@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import tdd.elise.tp.exceptions.InvalidBirthdateException;
+import tdd.elise.tp.exceptions.InvalidEmailException;
 import tdd.elise.tp.models.Member;
 import tdd.elise.tp.service.BookDataService;
 import tdd.elise.tp.service.MemberDataService;
@@ -52,6 +53,30 @@ class MemberManagerTest {
         // THEN vérifier qu'aucune exception n'est lancée
         assertDoesNotThrow(() -> {
             memberManager.validateBirthdate(memberWithValidBirthdate);
+        });
+    }
+
+    @Test
+    public void whenEmailIsValid_shouldNotThrowException() {
+        // GIVEN un membre avec un email valide
+        Member validMember = new Member("Doe", "John", new Date(), null, "john.doe@email.com");
+
+        // WHEN tentative de validation de l'email
+        // THEN vérifier qu'aucune exception n'est lancée
+        assertDoesNotThrow(() -> {
+            memberManager.validateEmail(validMember);
+        });
+    }
+
+    @Test
+    public void whenEmailIsInvalid_shouldThrowInvalidEmailException() {
+        // GIVEN un membre avec un email invalide
+        Member invalidMember = new Member("Doe", "John", new Date(), null, "jane.doeemail.com");
+
+        // WHEN tentative de validation de l'email
+        // THEN vérifier que l'exception est lancée
+        assertThrows(InvalidEmailException.class, () -> {
+            memberManager.validateEmail(invalidMember);
         });
     }
 

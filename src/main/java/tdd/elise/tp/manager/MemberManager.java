@@ -21,4 +21,8 @@ public class MemberManager {
             throw new InvalidBirthdateException();
         }
     }
+
+    public MemberManager validateEmail(Member validMember) {
+        return null;
+    }
 }
