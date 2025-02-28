@@ -6,6 +6,8 @@ import tdd.elise.tp.service.MailService;
 import tdd.elise.tp.service.ReservationDataService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ReservationManager {
     private final ReservationDataService databaseService;
@@ -37,9 +39,17 @@ public class ReservationManager {
         // Récupérer les réservations expirées
         List<Reservation> expiredReservations = databaseService.findByStatus("EXPIRED");
 
-        // Envoyer un mail pour chaque réservation expirée
-        for (Reservation reservation : expiredReservations) {
-            mailService.sendReminderEmail(reservation);
+        // Regrouper les réservations par adhérent
+        Map<Member, List<Reservation>> reservationsByMember = expiredReservations.stream()
+                .collect(Collectors.groupingBy(Reservation::getMember));
+
+        // Envoyer un seul email par adhérent avec la liste complète de ses réservations expirées
+        for (Map.Entry<Member, List<Reservation>> entry : reservationsByMember.entrySet()) {
+            mailService.sendReminderEmail(entry.getKey(), entry.getValue());
         }
+    }
+
+    public ReservationManager requestReminderEmailsForExpiredReservations() {
+        return null;
     }
 }
